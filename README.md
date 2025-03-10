@@ -7,6 +7,7 @@ A centralized spot for all your reusable GitHub Actions workflows and custom act
 | Name                         | Description                                                          | File Path                                                       |
 |------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
 | **MFE S3 Bucket Deployment** | Builds and deploys Micro-Frontend apps to AWS S3 with ease.          | [mfe-s3-bucket-deployment/action.yml](mfe-s3-bucket-deployment/action.yml) |
+| **Strain Repo Dispatch**     | Kicks off strain updates whenever certain repository events happen.  | [strain-repo-dispatch/action.yml](strain-repo-dispatch/action.yml) |
 
 ## Using Actions from Organization Repositories
 
