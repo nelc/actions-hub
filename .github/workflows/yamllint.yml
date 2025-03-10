@@ -1,0 +1,28 @@
+name: Lint YAML Files 📜
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.yml'
+      - '**.yaml'
+  pull_request:
+    paths:
+      - '**.yml'
+      - '**.yaml'
+
+jobs:
+  yamllint:
+    name: Run YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run YAML Lint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          strict: true
+          config_file: ./.config/.yamllint.yml
