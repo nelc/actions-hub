@@ -2,6 +2,11 @@
 
 A centralized spot for all your reusable GitHub Actions workflows and custom actions in the NELC organization. We aim to standardize CI/CD processes across multiple projects.
 
+## Available Actions & Workflows
+
+| Name                         | Description                                                          | File Path                                                       |
+|------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
+| **MFE S3 Bucket Deployment** | Builds and deploys Micro-Frontend apps to AWS S3 with ease.          | [mfe-s3-bucket-deployment/action.yml](mfe-s3-bucket-deployment/action.yml) |
 
 ## Using Actions from Organization Repositories
 
