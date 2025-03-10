@@ -2,6 +2,11 @@
 
 A centralized spot for all your reusable GitHub Actions workflows and custom actions in the NELC organization. We aim to standardize CI/CD processes across multiple projects.
 
+## Available Actions & Workflows
+
+| Name                         | Description                                                          | File Path                                                       |
+|------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
+| **Strain Repo Dispatch**     | Kicks off strain updates whenever certain repository events happen.  | [strain-repo-dispatch/action.yml](strain-repo-dispatch/action.yml) |
 
 ## Using Actions from Organization Repositories
 

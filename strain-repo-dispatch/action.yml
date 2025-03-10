@@ -1,0 +1,50 @@
+name: Strain Repo Dispatch 📜
+
+on:
+  workflow_call:
+    inputs:
+      STRAIN_PROPERTY:
+        description: Strain property value
+        required: true
+        type: string
+      STRAIN_PATH:
+        description: Path for the strain
+        required: true
+        type: string
+    secrets:
+      ROBONEXT_PAT:
+        description: Personal access token for repository dispatch
+        required: true
+
+jobs:
+  strain-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Manipulate strain property if necessary
+        run: |
+          echo "STRAIN_PROPERTY=${{ inputs.STRAIN_PROPERTY }}" >> $GITHUB_ENV
+
+      - name: Strain Repository Dispatch
+        if: |
+          github.event.action == 'opened' ||
+          github.event.action == 'synchronize' ||
+          (github.event.action == 'closed' && github.event.pull_request.merged)
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.ROBONEXT_PAT }}
+          repository: nelc/edx-platform-strains
+          event-type: strain-update-pr
+          client-payload: |
+            {
+              "repo": "${{ github.repository }}",
+              "sha": "${{ github.event.pull_request.head.sha }}",
+              "head_ref": "${{ github.head_ref }}",
+              "base_ref": "${{ github.base_ref }}",
+              "strain_property": "${{ env.STRAIN_PROPERTY }}",
+              "strain_property_value": "${{ env.PROPERTY_VALUE }}",
+              "strain_path": "${{ inputs.STRAIN_PATH }}",
+              "pr_number": "${{ github.event.number }}",
+              "pr_action": "${{ github.event.action }}"
+            }
+        env:
+          PROPERTY_VALUE: ${{ github.event.pull_request.merged && github.base_ref || github.head_ref }}
