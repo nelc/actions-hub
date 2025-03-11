@@ -7,6 +7,7 @@ A centralized spot for all your reusable GitHub Actions workflows and custom act
 | Name                         | Description                                                          | File Path                                                       |
 |------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
 | **Strain Repo Dispatch**     | Kicks off strain updates whenever certain repository events happen.  | [strain-repo-dispatch/action.yml](strain-repo-dispatch/action.yml) |
+| **MFE S3 Bucket Deployment** | Builds and deploys Micro-Frontend apps to AWS S3 with ease.          | [mfe-s3-bucket-deployment/action.yml](mfe-s3-bucket-deployment/action.yml) |
 
 ## Using Actions from Organization Repositories
 
@@ -43,7 +44,7 @@ jobs:
       contents: read
     steps:
       - name: Use Reusable Workflow
-        uses: nelc-actions-hub/<action-folder>/action.yml@main
+        uses: nelc/actions-hub/<action-folder>/action.yml@main
 ```
 
 ## Recommendations for Calling Reusable Workflows

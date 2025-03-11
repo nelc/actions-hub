@@ -1,0 +1,146 @@
+name: MFE S3 Bucket Deployment 🚀
+
+on:
+  workflow_call:
+    inputs:
+      NODE_VERSION:
+        description: The Node.js version to use
+        required: true
+        type: string
+      ATLAS_OPTIONS:
+        description: Options for pulling translations (if needed)
+        required: false
+        type: string
+        default: ""
+      PUBLIC_PATH_CDN:
+        description: The public CDN path for deployment
+        required: true
+        type: string
+      APP_ID:
+        description: Application ID used for naming and identification
+        required: true
+        type: string
+      MFE_CONFIG_API_URL:
+        description: Configuration API URL for the MFE
+        required: true
+        type: string
+      BUCKET_NAME:
+        description: S3 bucket name (without s3:// prefix)
+        required: true
+        type: string
+      PROD_BRANCH:
+        description: The production branch name
+        required: true
+        type: string
+
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        description: AWS Access Key ID
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        description: AWS Secret Access Key
+        required: true
+      AWS_DEFAULT_REGION:
+        description: AWS default region
+        required: true
+      AWS_CLOUDFRONT_DISTRIBUTION_ID:
+        description: AWS CloudFront Distribution ID
+        required: true
+
+jobs:
+  build:
+    environment:
+      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo workflow inputs for debugging
+        run: |
+          echo "Inputs: ${{ toJson(inputs) }}"
+
+      - name: Checkout MFE repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ inputs.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.NODE_VERSION }}
+
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List installed node modules (for debugging)
+        continue-on-error: true
+        run: npm list
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Pull translations
+        if: ${{ inputs.ATLAS_OPTIONS != '' }}
+        run: |
+          export PATH="$(pwd)/node_modules/.bin:$PATH"
+          make OPENEDX_ATLAS_PULL=true ATLAS_OPTIONS="${{ inputs.ATLAS_OPTIONS }}" pull_translations
+
+      - name: Build the application
+        run: npm run build
+        env:
+          PUBLIC_PATH: ${{ inputs.PUBLIC_PATH_CDN }}
+          APP_ID: ${{ inputs.APP_ID }}
+          MFE_CONFIG_API_URL: ${{ inputs.MFE_CONFIG_API_URL }}
+          ENABLE_NEW_RELIC: false
+          NODE_ENV: production
+
+      - name: Print generated HTML for verification
+        run: cat dist/index.html
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.APP_ID }}-dist-artifact
+          path: dist
+
+  deployment:
+    environment:
+      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
+      url: ${{ inputs.PUBLIC_PATH_CDN }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.APP_ID }}-dist-artifact
+
+      - name: Echo workflow inputs for debugging
+        run: |
+          echo "Inputs: ${{ toJson(inputs) }}"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync . $S3_BUCKET --delete
+        env:
+          S3_BUCKET: s3://${{ inputs.BUCKET_NAME }}/${{ inputs.APP_ID }}/
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/${{ inputs.APP_ID }}/*"
