@@ -6,8 +6,8 @@ A centralized spot for all your reusable GitHub Actions workflows and custom act
 
 | Name                         | Description                                                          | File Path                                                       |
 |------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
-| **Strain Repo Dispatch**     | Kicks off strain updates whenever certain repository events happen.  | [strain-repo-dispatch/action.yml](strain-repo-dispatch/action.yml) |
-| **MFE S3 Bucket Deployment** | Builds and deploys Micro-Frontend apps to AWS S3 with ease.          | [mfe-s3-bucket-deployment/action.yml](mfe-s3-bucket-deployment/action.yml) |
+| **Strain Repo Dispatch**     | Kicks off strain updates whenever certain repository events happen.  | [.github/workflows/strain-repo-dispatch.yml](./.github/workflows/strain-repo-dispatch.yml) |
+| **MFE S3 Bucket Deployment** | Builds and deploys Micro-Frontend apps to AWS S3 with ease.          | [.github/workflows/mfe-s3-bucket-deployment.yml](./.github/workflows/mfe-s3-bucket-deployment.yml) |
 
 ## Using Actions from Organization Repositories
 
@@ -17,7 +17,7 @@ If you’d like to use these actions in your own workflows within the same organ
 
 ```yaml
 - name: Run an Action from Actions Hub
-  uses: nelc/actions-hub/<action-folder>/action.yml@v1.0.0
+  uses: nelc/actions-hub/.github/workflows/<reusable-workflow>.yml@1.0.0
 ```
 
 ### Referencing Specific Versions
@@ -26,10 +26,10 @@ You can point to a reusable action or workflow by tag, branch, or commit SHA:
 
 ```yaml
 # Using a version tag
-uses: nelc/actions-hub/<action-folder>/action.yml@v1.0.0
+uses: nelc/actions-hub/.github/workflows/<reusable-workflow>.yml@v1.0.0
 
 # Using a commit SHA
-uses: nelc/actions-hub/<action-folder>/action.yml@7a6bcc1234f
+uses: nelc/actions-hub/.github/workflows/<reusable-workflow>.yml@7a6bcc1234f
 ```
 
 ### Authentication Considerations
