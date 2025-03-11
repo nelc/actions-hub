@@ -44,7 +44,7 @@ jobs:
       contents: read
     steps:
       - name: Use Reusable Workflow
-        uses: nelc-actions-hub/<action-folder>/action.yml@main
+        uses: nelc/actions-hub/<action-folder>/action.yml@main
 ```
 
 ## Recommendations for Calling Reusable Workflows

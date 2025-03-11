@@ -28,6 +28,10 @@ on:
         description: S3 bucket name (without s3:// prefix)
         required: true
         type: string
+      PROD_BRANCH:
+        description: The production branch name
+        required: true
+        type: string
 
     secrets:
       AWS_ACCESS_KEY_ID:
@@ -46,7 +50,7 @@ on:
 jobs:
   build:
     environment:
-      name: ${{ github.ref_name == 'open-release/redwood.nelp' && 'prod' || 'stage' }}
+      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
     runs-on: ubuntu-latest
     steps:
       - name: Echo workflow inputs for debugging
@@ -108,7 +112,7 @@ jobs:
 
   deployment:
     environment:
-      name: ${{ github.ref_name == 'open-release/redwood.nelp' && 'prod' || 'stage' }}
+      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
       url: ${{ inputs.PUBLIC_PATH_CDN }}
     runs-on: ubuntu-latest
     needs: build
