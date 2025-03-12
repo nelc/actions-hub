@@ -4,13 +4,14 @@ on:
   workflow_call:
     inputs:
       PROD_BRANCH:
-        description: 'Production branch name'
+        description: Production branch name
+        type: string
         required: true
 
 jobs:
   build:
     environment:
-      name:  ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
+      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
     runs-on: ubuntu-latest
     steps:
       - name: Echo workflow vars for debugging
