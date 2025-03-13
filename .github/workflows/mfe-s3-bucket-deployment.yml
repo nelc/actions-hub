@@ -1,3 +1,29 @@
+# MFE S3 Bucket Deployment Workflow
+
+# PURPOSE:
+#   This workflow builds and deploys a Micro Frontend (MFE) application to an AWS S3 bucket
+
+# TRIGGER:
+#   This is a reusable workflow that can be called from other workflows using workflow_call.
+#
+# INPUTS:
+#   - PROD_BRANCH: Name of the production branch (required) - used to determine environment
+
+# REQUIRED GITHUB VARIABLES (vars):
+#   - BUCKET_NAME: The name of the S3 bucket where the MFE will be deployed | ** Env Based **
+#   - PUBLIC_PATH_CDN: The CDN URL where the MFE will be hosted | ** Env Based **
+#   - NODE_VERSION: Version of Node.js to use for building
+#   - APP_ID: The ID/name of the MFE application
+#   - MFE_CONFIG_API_URL: The API URL for the MFE configuration
+#   - ATLAS_OPTIONS: Optional. Configuration for translation pulling (if empty, step is skipped)
+
+# REQUIRED SECRETS:
+#   - AWS_ACCESS_KEY_ID: AWS access key ID with permissions to deploy to S3 | ** Env Based **
+#   - AWS_SECRET_ACCESS_KEY: AWS secret access key | ** Env Based **
+#   - AWS_DEFAULT_REGION: AWS region where the S3 bucket is located | ** Env Based **
+#   - AWS_CLOUDFRONT_DISTRIBUTION_ID: CloudFront distribution ID for cache invalidation | ** Env Based **
+
+
 name: MFE S3 Bucket Deployment 🚀
 
 on:
