@@ -7,7 +7,7 @@
 #   This is a reusable workflow that can be called from other workflows using workflow_call.
 #
 # INPUTS:
-#   - PROD_BRANCH: Name of the production branch (required) - used to determine environment
+#   - ENVIRONMENT: The deployment environment (e.g., 'prod', 'stage')
 
 # REQUIRED GITHUB VARIABLES (vars):
 #   - BUCKET_NAME: The name of the S3 bucket where the MFE will be deployed | ** Env Based **
@@ -29,15 +29,15 @@ name: MFE S3 Bucket Deployment 🚀
 on:
   workflow_call:
     inputs:
-      PROD_BRANCH:
-        description: Production branch name
+      ENVIRONMENT:
+        description: Deployment environment (prod, stage)
         type: string
         required: true
 
 jobs:
   build:
     environment:
-      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
+      name: ${{ inputs.ENVIRONMENT }}
     runs-on: ubuntu-latest
     steps:
       - name: Echo workflow vars for debugging
@@ -99,7 +99,7 @@ jobs:
 
   deployment:
     environment:
-      name: ${{ github.ref_name == inputs.PROD_BRANCH && 'prod' || 'stage' }}
+      name: ${{ inputs.ENVIRONMENT }}
       url: ${{ vars.PUBLIC_PATH_CDN }}
     runs-on: ubuntu-latest
     needs: build
