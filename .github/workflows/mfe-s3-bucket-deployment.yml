@@ -43,6 +43,8 @@ jobs:
       - name: Echo workflow vars for debugging
         run: |
           echo "variables: ${{ toJson(vars) }}"
+          echo "current branch: ${{ github.ref_name }}"
+          echo "repo default branch: ${{ github.event.repository.default_branch }}"
 
       - name: Checkout MFE repository
         uses: actions/checkout@v4
