@@ -1,0 +1,78 @@
+name: Create Jira Issue
+
+on:
+  workflow_call:
+    inputs:
+      story_summary:
+        required: true
+        type: string
+      story_description:
+        required: false
+        type: string
+        default: ""
+      subtask_summary:
+        required: true
+        type: string
+      subtask_description:
+        required: false
+        type: string
+        default: ""
+      environment:
+        required: true
+        type: string
+    secrets:
+      MIGRATION_BACKLOG_JIRA_EMAIL:
+        required: true
+      MIGRATION_BACKLOG_JIRA_TOKEN:
+        required: true
+      MIGRATION_BACKLOG_JIRA_URL:
+        required: true
+      MIGRATION_BACKLOG_JIRA_PROJECT:
+        required: true
+      MIGRATION_BACKLOG_JIRA_EPIC_KEY:
+        required: true
+      MIGRATION_BACKLOG_JIRA_EPIC_LINK_FIELD:
+        required: true
+
+jobs:
+  create_jira_issue:
+    environment:
+      name: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions-hub repo
+        uses: actions/checkout@v4
+        with:
+          repository: nelc/actions-hub
+          ref: and/jira_automation_action
+          path: actions-hub
+      - name: Debug input and env values
+        run: |
+          echo "Story Summary: ${{ inputs.story_summary }}"
+          echo "Subtask Summary: ${{ inputs.subtask_summary }}"
+          echo "Project: ${{ secrets.MIGRATION_BACKLOG_JIRA_PROJECT }}"
+          echo "Epic Key: ${{ secrets.MIGRATION_BACKLOG_JIRA_EPIC_KEY }}"
+          echo "Epic Field: ${{ secrets.MIGRATION_BACKLOG_JIRA_EPIC_LINK_FIELD }}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install jira
+
+      - name: Run Jira issue script
+        run: |
+          python actions-hub/scripts/jira_issue_flow.py \
+            --story-summary "${{ inputs.story_summary }}" \
+            --story-description "${{ inputs.story_description }}" \
+            --subtask-summary "${{ inputs.subtask_summary }}" \
+            --subtask-description "${{ inputs.subtask_description }}"
+        env:
+          MIGRATION_BACKLOG_JIRA_EMAIL: ${{ secrets.MIGRATION_BACKLOG_JIRA_EMAIL }}
+          MIGRATION_BACKLOG_JIRA_TOKEN: ${{ secrets.MIGRATION_BACKLOG_JIRA_TOKEN }}
+          MIGRATION_BACKLOG_JIRA_URL: ${{ secrets.MIGRATION_BACKLOG_JIRA_URL }}
+          MIGRATION_BACKLOG_JIRA_PROJECT: ${{ secrets.MIGRATION_BACKLOG_JIRA_PROJECT }}
+          MIGRATION_BACKLOG_JIRA_EPIC_KEY: ${{ secrets.MIGRATION_BACKLOG_JIRA_EPIC_KEY }}
+          MIGRATION_BACKLOG_JIRA_EPIC_LINK_FIELD: ${{ secrets.MIGRATION_BACKLOG_JIRA_EPIC_LINK_FIELD }}
