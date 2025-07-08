@@ -171,3 +171,5 @@ if __name__ == "__main__":
         story_key=story.key,
         description=args.subtask_description,
     )
+
+    print(f"Jira story '{story.fields.summary}' and sub-task '{args.subtask_summary}' created or already exist.")
