@@ -1,0 +1,52 @@
+name: Smoke Tests
+
+on:
+  workflow_call:
+    inputs:
+      target_url:
+        description: "Base URL for the application"
+        required: true
+        type: string
+      user_email:
+        description: "Test user email"
+        required: true
+        type: string
+      user_password:
+        description: "Test user password"
+        required: true
+        type: string
+
+jobs:
+  login-user:
+    name: Login User Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout actions-hub repo
+        uses: actions/checkout@v4
+        with:
+          repository: nelc/actions-hub
+          ref: and/add-basic-smoke-tests
+          path: actions-hub
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright
+          playwright install
+
+      - name: Hide the inputs values to keep them private in the logs when running this workflow
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        with:
+          exclude_inputs: target_url
+
+      - name: Run login-user test
+        run: |
+          python actions-hub/scripts/smoke-tests/test_login_user.py \
+            --base-url "${{ inputs.target_url }}" \
+            --email "${{ inputs.user_email }}" \
+            --password "${{ inputs.user_password }}"
