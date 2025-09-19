@@ -15,6 +15,11 @@ on:
         description: "Test user password"
         required: true
         type: string
+      course_id:
+        description: "Course ID to test viewing the course page"
+        required: true
+        type: string
+
 
 jobs:
   login-user:
@@ -50,3 +55,38 @@ jobs:
             --base-url "${{ inputs.target_url }}" \
             --email "${{ inputs.user_email }}" \
             --password "${{ inputs.user_password }}"
+
+  view-course:
+    name: View Course Page Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout actions-hub repo
+        uses: actions/checkout@v4
+        with:
+          repository: nelc/actions-hub
+          ref: and/add-basic-smoke-tests
+          path: actions-hub
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright
+          playwright install
+
+      - name: Hide the inputs values to keep them private in the logs
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        with:
+          exclude_inputs: target_url,course_id
+
+      - name: Run view-course test
+        run: |
+          python actions-hub/scripts/smoke-tests/test_view_course.py \
+            --base-url "${{ inputs.target_url }}" \
+            --email "${{ inputs.user_email }}" \
+            --password "${{ inputs.user_password }}" \
+            --course-id "${{ inputs.course_id }}"
