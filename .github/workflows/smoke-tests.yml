@@ -3,6 +3,10 @@ name: Smoke Tests
 on:
   workflow_call:
     inputs:
+     run_test:
+        description: 'Select desired test'
+        required: true
+        type: string
       target_url:
         description: "Base URL for the application"
         required: true
@@ -23,6 +27,7 @@ on:
 
 jobs:
   login-user:
+    if: ${{ inputs.run_test == 'All' ||  inputs.run_test == 'login-user'}}
     name: Login User Test
     runs-on: ubuntu-latest
 
@@ -57,6 +62,7 @@ jobs:
             --password "${{ inputs.user_password }}"
 
   view-course:
+    if: ${{ inputs.run_test == 'All' ||  inputs.run_test == 'view-course'}}
     name: View Course Page Test
     runs-on: ubuntu-latest
 
