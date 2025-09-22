@@ -3,7 +3,7 @@ name: Smoke Tests
 on:
   workflow_call:
     inputs:
-     run_test:
+      run_test:
         description: 'Select desired test'
         required: true
         type: string
@@ -26,6 +26,34 @@ on:
 
 
 jobs:
+  check-heartbeat:
+    if: ${{ inputs.run_test == 'All' ||  inputs.run_test == 'check-heartbeat'}}
+    name: Check Heartbeat
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout actions-hub repo
+        uses: actions/checkout@v4
+        with:
+          repository: nelc/actions-hub
+          ref: and/add-basic-smoke-tests
+          path: actions-hub
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright
+          playwright install
+
+      - name: Run heartbeat test
+        run: |
+          python actions-hub/scripts/smoke-tests/test_heartbeat.py \
+            --base-url "${{ inputs.target_url }}"
+
   login-user:
     if: ${{ inputs.run_test == 'All' ||  inputs.run_test == 'login-user'}}
     name: Login User Test
