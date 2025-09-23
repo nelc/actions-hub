@@ -4,31 +4,31 @@ on:
   workflow_call:
     inputs:
       run_test:
-        description: 'Select desired test'
+        description: Select desired test
         required: true
         type: string
       target_url:
-        description: "Base URL for the application"
+        description: Base URL for the application
         required: true
         type: string
       user_email:
-        description: "Test user email"
+        description: Test user email
         required: true
         type: string
       user_password:
-        description: "Test user password"
+        description: Test user password
         required: true
         type: string
       course_id:
-        description: "Course ID to test viewing the course page"
+        description: Course ID to test viewing the course page
         required: true
         type: string
       target_plugins:
-        description: "Desired plugins to validate"
+        description: Desired plugins to validate
         required: true
         type: string
       unit_id:
-        description: "Unit ID to test complete-multiplechoice-unit"
+        description: Unit ID to test complete-multiplechoice-unit
         required: true
         type: string
 
