@@ -198,3 +198,36 @@ jobs:
             --password "${{ inputs.user_password }}" \
             --course-id "${{ inputs.course_id }}" \
             --unit-id "${{ inputs.unit_id }}"
+
+  register-user:
+    if: ${{ inputs.run_test == 'All' ||  inputs.run_test == 'register-user'}}
+    name: Register user test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout actions-hub repo
+        uses: actions/checkout@v4
+        with:
+          repository: nelc/actions-hub
+          ref: and/add-basic-smoke-tests
+          path: actions-hub
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright
+          playwright install
+
+      - name: Hide the inputs values to keep them private in the logs
+        uses: levibostian/action-hide-sensitive-inputs@v1
+        with:
+          exclude_inputs: target_url,course_id
+
+      - name: Run register-user test
+        run: |
+          python actions-hub/scripts/smoke-tests/test_register_user.py \
+            --base-url "${{ inputs.target_url }}"
