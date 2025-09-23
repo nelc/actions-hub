@@ -21,7 +21,6 @@ def test_view_course(base_url: str, course_id: str, email: str, password: str):
         login_user(page, base_url, email, password)
 
         course_url = f"{base_url}/learning/course/{course_id}/home"
-        page.wait_for_load_state("networkidle")
         page.goto(course_url)
 
         expect(page).to_have_url(course_url)

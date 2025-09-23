@@ -15,3 +15,4 @@ def login_user(page, base_url: str, email: str, password: str):
     page.fill("input[name='email']", email)
     page.fill("input[name='password']", password)
     page.click("button[type='submit']")
+    page.wait_for_load_state("networkidle")
