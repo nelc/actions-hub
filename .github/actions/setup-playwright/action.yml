@@ -1,0 +1,30 @@
+name: Setup Python + Playwright
+description: Common setup for all Playwright-based smoke tests
+inputs:
+  python-version:
+    description: Version of Python to use
+    required: false
+    default: "3.11"
+  exclude_inputs:
+    description: Comma-separated list of inputs to exclude from masking
+    required: false
+    default: target_url,course_id
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install dependencies
+      run: |
+        pip install pytest-playwright
+        playwright install
+      shell: bash
+
+    - name: Hide the inputs values to keep them private in the logs
+      uses: levibostian/action-hide-sensitive-inputs@v1
+      with:
+        exclude_inputs: ${{ inputs.exclude_inputs }}

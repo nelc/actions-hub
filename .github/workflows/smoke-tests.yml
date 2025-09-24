@@ -47,15 +47,8 @@ jobs:
           ref: and/add-basic-smoke-tests
           path: actions-hub
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install pytest-playwright
-          playwright install
+      - name: Setup Python and Playwright
+        uses: ./actions-hub/.github/actions/setup-playwright
 
       - name: Run heartbeat test
         run: |
@@ -75,15 +68,8 @@ jobs:
           ref: and/add-basic-smoke-tests
           path: actions-hub
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install pytest-playwright
-          playwright install
+      - name: Setup Python and Playwright
+        uses: ./actions-hub/.github/actions/setup-playwright
 
       - name: Validate eox plugins
         run: |
@@ -104,20 +90,8 @@ jobs:
           ref: and/add-basic-smoke-tests
           path: actions-hub
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install pytest-playwright
-          playwright install
-
-      - name: Hide the inputs values to keep them private in the logs when running this workflow
-        uses: levibostian/action-hide-sensitive-inputs@v1
-        with:
-          exclude_inputs: target_url
+      - name: Setup Python and Playwright
+        uses: ./actions-hub/.github/actions/setup-playwright
 
       - name: Run login-user test
         run: |
@@ -139,20 +113,8 @@ jobs:
           ref: and/add-basic-smoke-tests
           path: actions-hub
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install pytest-playwright
-          playwright install
-
-      - name: Hide the inputs values to keep them private in the logs
-        uses: levibostian/action-hide-sensitive-inputs@v1
-        with:
-          exclude_inputs: target_url,course_id
+      - name: Setup Python and Playwright
+        uses: ./actions-hub/.github/actions/setup-playwright
 
       - name: Run view-course test
         run: |
@@ -175,20 +137,8 @@ jobs:
           ref: and/add-basic-smoke-tests
           path: actions-hub
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install pytest-playwright
-          playwright install
-
-      - name: Hide the inputs values to keep them private in the logs
-        uses: levibostian/action-hide-sensitive-inputs@v1
-        with:
-          exclude_inputs: target_url,course_id
+      - name: Setup Python and Playwright
+        uses: ./actions-hub/.github/actions/setup-playwright
 
       - name: Run complete-multiplechoice-unit test
         run: |
@@ -212,20 +162,8 @@ jobs:
           ref: and/add-basic-smoke-tests
           path: actions-hub
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install pytest-playwright
-          playwright install
-
-      - name: Hide the inputs values to keep them private in the logs
-        uses: levibostian/action-hide-sensitive-inputs@v1
-        with:
-          exclude_inputs: target_url,course_id
+      - name: Setup Python and Playwright
+        uses: ./actions-hub/.github/actions/setup-playwright
 
       - name: Run register-user test
         run: |
