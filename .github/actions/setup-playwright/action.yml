@@ -13,6 +13,19 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Cache Python & Playwright dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.cache/ms-playwright
+        key: >
+          ${{ runner.os }}-py-${{ inputs.python-version }}-playwright-${{
+            hashFiles('actions-hub/.github/actions/setup-playwright/requirements.txt')
+          }}
+        restore-keys: |
+          ${{ runner.os }}-py-${{ inputs.python-version }}-playwright
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -20,7 +33,7 @@ runs:
 
     - name: Install dependencies
       run: |
-        pip install pytest-playwright
+        pip install -r ./actions-hub/.github/actions/setup-playwright/requirements.txt
         playwright install
       shell: bash
 
