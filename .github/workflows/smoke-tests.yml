@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nelc/actions-hub
-          ref: and/add-basic-smoke-tests
+          ref: main
           path: actions-hub
 
       - name: Setup Python and Playwright
@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nelc/actions-hub
-          ref: and/add-basic-smoke-tests
+          ref: main
           path: actions-hub
 
       - name: Setup Python and Playwright
@@ -87,7 +87,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nelc/actions-hub
-          ref: and/add-basic-smoke-tests
+          ref: main
           path: actions-hub
 
       - name: Setup Python and Playwright
@@ -110,7 +110,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nelc/actions-hub
-          ref: and/add-basic-smoke-tests
+          ref: main
           path: actions-hub
 
       - name: Setup Python and Playwright
@@ -134,7 +134,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nelc/actions-hub
-          ref: and/add-basic-smoke-tests
+          ref: main
           path: actions-hub
 
       - name: Setup Python and Playwright
@@ -159,7 +159,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nelc/actions-hub
-          ref: and/add-basic-smoke-tests
+          ref: main
           path: actions-hub
 
       - name: Setup Python and Playwright
