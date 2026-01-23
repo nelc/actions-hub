@@ -64,11 +64,13 @@ jobs:
 
       - name: Run Jira issue script
         run: |
+          printf '%s' "${{ inputs.subtask_description }}" > /tmp/subtask_description.txt
+
           python actions-hub/scripts/jira_issue_flow.py \
             --story-summary "${{ inputs.story_summary }}" \
             --story-description "${{ inputs.story_description }}" \
             --subtask-summary "${{ inputs.subtask_summary }}" \
-            --subtask-description "${{ inputs.subtask_description }}"
+            --subtask-description "$(cat /tmp/subtask_description.txt)"
         env:
           MIGRATION_BACKLOG_JIRA_EMAIL: ${{ secrets.MIGRATION_BACKLOG_JIRA_EMAIL }}
           MIGRATION_BACKLOG_JIRA_TOKEN: ${{ secrets.MIGRATION_BACKLOG_JIRA_TOKEN }}
