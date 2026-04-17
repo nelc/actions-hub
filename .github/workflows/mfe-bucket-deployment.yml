@@ -112,6 +112,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ vars.APP_ID }}-dist-artifact
+          path.: ./dist
 
       - name: Echo workflow vars for debugging
         run: |
@@ -128,7 +129,7 @@ jobs:
 
       - name: 'Deploy to GCS with Cache Headers'
         run: |
-          gcloud storage rsync . gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/ \
+          gcloud storage rsync .dist gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/ \
             --recursive \
             --delete-unmatched-destination-objects \
             --cache-control="${{ vars.CACHE_CONTROL || 'public, max-age=3600' }}"
