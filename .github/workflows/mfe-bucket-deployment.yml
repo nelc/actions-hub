@@ -118,16 +118,16 @@ jobs:
         run: |
           echo "variables: ${{ toJson(vars) }}"
 
-      - name: 'Authenticate to Google Cloud'
-        id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS_JSON }}'
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
 
-      - name: 'Deploy to GCS with Cache Headers'
+      - name: Deploy to GCS with Cache Headers
         run: |
           gcloud storage rsync ./dist gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/ \
             --recursive \
