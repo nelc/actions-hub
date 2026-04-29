@@ -134,5 +134,6 @@ jobs:
             --delete-unmatched-destination-objects \
             --cache-control="${{ vars.CACHE_CONTROL || 'public, max-age=86400, immutable' }}"
 
-          gcloud storage objects update gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/index.html \
+          gcloud storage objects update \
+            gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/index.html \
             --cache-control="public, max-age=300"
