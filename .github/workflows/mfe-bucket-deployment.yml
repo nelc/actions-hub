@@ -20,7 +20,7 @@
 #   - GCP_CREDENTIALS_JSON: JSON string of GCP credentials with permissions to deploy to the target GCS bucket
 
 
-name: MFE S3 Bucket Deployment 🚀
+name: MFE Bucket Deployment 🚀
 
 on:
   workflow_call:

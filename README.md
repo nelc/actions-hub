@@ -7,7 +7,7 @@ A centralized spot for all your reusable GitHub Actions workflows and custom act
 | Name                         | Description                                                          | File Path                                                       |
 |------------------------------|----------------------------------------------------------------------|-----------------------------------------------------------------|
 | **Strain Repo Dispatch**     | Kicks off strain updates whenever certain repository events happen.  | [.github/workflows/strain-repo-dispatch.yml](./.github/workflows/strain-repo-dispatch.yml) |
-| **MFE Bucket Deployment** | Builds and deploys Micro-Frontend apps to AWS S3 with ease.          | [.github/workflows/mfe-bucket-deployment.yml](./.github/workflows/mfe-bucket-deployment.yml) |
+| **MFE Bucket Deployment** | Builds and deploys Micro-Frontend apps to cloud bucket with ease.          | [.github/workflows/mfe-bucket-deployment.yml](./.github/workflows/mfe-bucket-deployment.yml) |
 
 ## Using Actions from Organization Repositories
 
@@ -53,7 +53,7 @@ jobs:
   Stick to a specific release tag (e.g., `@v1.0.0`) or commit SHA so your workflow won’t break if things change upstream.
 
 - **Manage Secrets Securely:**
-  Store credentials (like AWS keys, PATs, etc.) in your repo or org secrets. Then reference them using `secrets:` in your workflow.
+  Store credentials (like keys, PATs, etc.) in your repo or org secrets. Then reference them using `secrets:` in your workflow.
 
 - **Check Permissions:**
   If your actions or workflows live in private repositories, confirm that the calling repo has proper read access or uses a valid token.
