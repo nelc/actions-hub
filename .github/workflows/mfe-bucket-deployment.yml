@@ -1,7 +1,7 @@
-# MFE S3 Bucket Deployment Workflow
+# MFE Bucket Deployment Workflow
 
 # PURPOSE:
-#   This workflow builds and deploys a Micro Frontend (MFE) application to an AWS S3 bucket
+#   This workflow builds and deploys a Micro Frontend (MFE) application to a bucket
 
 # TRIGGER:
 #   This is a reusable workflow that can be called from other workflows using workflow_call.
@@ -10,21 +10,17 @@
 #   - ENVIRONMENT: The deployment environment (e.g., 'prod', 'stage')
 
 # REQUIRED GITHUB VARIABLES (vars):
-#   - BUCKET_NAME: The name of the S3 bucket where the MFE will be deployed | ** Env Based **
-#   - PUBLIC_PATH_CDN: The CDN URL where the MFE will be hosted | ** Env Based **
+#   - BUCKET_NAME: The name of the bucket where the MFE will be deployed | ** Env Based **
 #   - NODE_VERSION: Version of Node.js to use for building
 #   - APP_ID: The ID/name of the MFE application
 #   - MFE_CONFIG_API_URL: The API URL for the MFE configuration
 #   - ATLAS_OPTIONS: Optional. Configuration for translation pulling (if empty, step is skipped)
 
 # REQUIRED SECRETS:
-#   - AWS_ACCESS_KEY_ID: AWS access key ID with permissions to deploy to S3 | ** Env Based **
-#   - AWS_SECRET_ACCESS_KEY: AWS secret access key | ** Env Based **
-#   - AWS_DEFAULT_REGION: AWS region where the S3 bucket is located | ** Env Based **
-#   - AWS_CLOUDFRONT_DISTRIBUTION_ID: CloudFront distribution ID for cache invalidation | ** Env Based **
+#   - GCP_CREDENTIALS_JSON: JSON string of GCP credentials with permissions to deploy to the target GCS bucket
 
 
-name: MFE S3 Bucket Deployment 🚀
+name: MFE Bucket Deployment 🚀
 
 on:
   workflow_call:
@@ -37,9 +33,6 @@ on:
         type: string
         required: false
       PUBLIC_PATH_CDN:
-        type: string
-        required: false
-      AWS_CLOUDFRONT_DISTRIBUTION_ID:
         type: string
         required: false
 
@@ -119,26 +112,28 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ vars.APP_ID }}-dist-artifact
+          path: ./dist
 
       - name: Echo workflow vars for debugging
         run: |
           echo "variables: ${{ toJson(vars) }}"
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          credentials_json: '${{ secrets.GCP_CREDENTIALS_JSON }}'
 
-      - name: Deploy to S3
-        run: |
-          aws s3 sync . $S3_BUCKET --delete
-        env:
-          S3_BUCKET: s3://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
 
-      - name: Invalidate CloudFront cache
+      - name: Deploy to GCS with Cache Headers
         run: |
-          aws cloudfront create-invalidation \
-            --distribution-id ${{ inputs.AWS_CLOUDFRONT_DISTRIBUTION_ID || secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
-            --paths "/${{ vars.APP_ID }}/*"
+          gcloud storage rsync ./dist gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/ \
+            --recursive \
+            --delete-unmatched-destination-objects \
+            --cache-control="${{ vars.CACHE_CONTROL || 'public, max-age=86400, immutable' }}"
+
+          gcloud storage objects update \
+            gs://${{ inputs.BUCKET_NAME || vars.BUCKET_NAME }}/${{ vars.APP_ID }}/index.html \
+            --cache-control="public, max-age=300"
