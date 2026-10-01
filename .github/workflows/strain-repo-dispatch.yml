@@ -12,7 +12,7 @@ on:
         required: true
         type: string
     secrets:
-      GITHUB_PAT:
+      CI_PAT:
         description: Personal access token for repository dispatch
         required: true
 
@@ -31,7 +31,7 @@ jobs:
           (github.event.action == 'closed' && github.event.pull_request.merged)
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.GITHUB_PAT }}
+          token: ${{ secrets.CI_PAT }}
           repository: nelc/edx-platform-strains
           event-type: strain-update-pr
           client-payload: |
