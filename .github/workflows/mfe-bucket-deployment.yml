@@ -18,6 +18,8 @@
 
 # REQUIRED SECRETS:
 #   - GCP_CREDENTIALS_JSON: JSON string of GCP credentials with permissions to deploy to the target GCS bucket
+#   - NELC_REPO_READ_TOKEN: read-only token (Contents: read) for nelc/brand-openedx and
+#     nelc/futurex-translations; callers pass it with `secrets: inherit`
 
 
 name: MFE Bucket Deployment 🚀
@@ -50,6 +52,18 @@ jobs:
 
       - name: Checkout MFE repository
         uses: actions/checkout@v4
+
+      # The MFE's git dependencies (@edx/brand -> nelc/brand-openedx) and the atlas
+      # translations pull (nelc/futurex-translations) live in private repositories.
+      - name: Authenticate git for private nelc repositories
+        env:
+          NELC_REPO_READ_TOKEN: ${{ secrets.NELC_REPO_READ_TOKEN }}
+        if: env.NELC_REPO_READ_TOKEN != ''
+        run: |
+          for prefix in "https://github.com/nelc/" "ssh://git@github.com/nelc/" "git@github.com:nelc/"; do
+            git config --global --add \
+              url."https://x-access-token:${NELC_REPO_READ_TOKEN}@github.com/nelc/".insteadOf "$prefix"
+          done
 
       - name: Set up Node.js ${{ vars.NODE_VERSION }}
         uses: actions/setup-node@v4
